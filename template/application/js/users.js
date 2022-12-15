@@ -29,8 +29,6 @@ const reader=new FileReader();
 fileImage.addEventListener('change',(e)=>{
     let selectedImage=e.target.files[0];
    reader.readAsDataURL(selectedImage)
-  
-  
 })
 
 reader.onload=e=>{
@@ -38,18 +36,9 @@ reader.onload=e=>{
     $('#showImage').show();
 }
 
-
 //Register API
 $("#usersForm").submit(function(event){
     event.preventDefault();
-
-    // let amount=$("#amount").val();
-    // let type=$("#type").val();
-    // let description=$("#description").val();
-    // let id=$("#get_update_id").val();
-    // console.log("amount:",amount)
-    // console.log("amount:",type)
-    // console.log("amount:",description)
     let sendinData={}
 
     //get all form_data
@@ -75,9 +64,9 @@ $("#usersForm").submit(function(event){
             let status=data.status;
             let response=data.data;
             if(status){
-                    displayMessage("success",response);
-                    LoadData()
-                    btnAction="Insert";
+                btnAction="Insert";
+                displayMessage("success",response);
+                LoadData()
                     $("#usersForm")[0].reset()
                 }else{
                     displayMessage("Err",response);
@@ -91,8 +80,6 @@ $("#usersForm").submit(function(event){
         }
     })
 })
-
-
 
 //Fetch specific user
 function fetch_User_Info(id){
@@ -115,6 +102,8 @@ function fetch_User_Info(id){
                 $("#username").val(response['username']);
                 $("#showImage").attr('src',`../uploads/${response['image']}`);
                 $("#usersModal").modal("show");
+
+                LoadData()
                 
             }
         },
@@ -127,39 +116,7 @@ function fetch_User_Info(id){
 }
 
 
-//Delete transaction user
-// function delete_User_Trans(id){
-//     let sendinData={
-//         "action":"Delete_user_transaction",
-//         "id":id,
-//     }
-//     $.ajax({
-//         method:"POST",
-//         dataType:"JSON",
-//         url:"../api/users.php",
-//         data:sendinData,
-//         success:function(data){
-//             let response=data.data;
-//             let status=data.status;
-
-//             // console.log(response);
-//             if(status){
-//                 swal("Good job!", response, "success");
-//                 LoadData()
-//             }else{
-//                 swall(response);
-//             }
-//         },
-//         error:function(data){  
-//             let error=data.responseText="Error occurs ?";
-//             displayMessage("error",error);    
-//         }
-//     })
-    
-// }
-
 //LoadData API
-
 function LoadData(){
     $("#usersTable tbody").html("");
     let sendinData={
@@ -224,6 +181,37 @@ function LoadData(){
     
 }
 
+//Delete transaction user
+function delete_User_Info(id){
+    let sendinData={
+        "action":"Delete_user_info",
+        "id":id,
+    }
+    $.ajax({
+        method:"POST",
+        dataType:"JSON",
+        url:"../api/users.php",
+        data:sendinData,
+        success:function(data){
+            let response=data.data;
+            let status=data.status;
+            console.log('stut :',status)
+            if(status){
+                swal("Good job!", response, "success");
+                LoadData()
+            }else{
+                swal(response);
+            }
+        },
+        error:function(data){  
+            let error=data.responseText="Error occurs ?";
+            displayMessage("error",error);    
+        }
+    })
+    
+} 
+
+
 //Message Success or Error
 function displayMessage(type,message){
     let success=document.querySelector(".alert-success");
@@ -245,6 +233,7 @@ function displayMessage(type,message){
     }
 }
 
+
 $("#usersTable").on("click","a.update_info",function(){
     id=$(this).attr("update_id");
     console.log("ID :",id)
@@ -256,6 +245,6 @@ $("#usersTable").on("click","a.delete_info",function(){
     id=$(this).attr("delete_id");
     // console.log(id)
     if(confirm("Are you sure to delete this record?")){
-        delete_User_Trans(id);
+        delete_User_Info(id);
     }
 })

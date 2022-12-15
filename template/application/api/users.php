@@ -155,18 +155,15 @@ function get_user_info($conn){
     echo json_encode($data);
 }
 
-
-
-
-
-//Delete Transaction
-function Delete_user_transaction($conn){
+//Delete User
+function Delete_user_info($conn){
     $data=array();
     extract($_POST);
-    $query="DELETE FROM expense WHERE id='$id'";
+    $query="DELETE FROM users WHERE id='$id'";
     $result=$conn->query($query);
 
     if($result){
+        unlink("../uploads/".$id.'.png');
        $data=array("status"=>true, "data"=>"Deleted successfully");
     }else{
         $data=array("status"=>false, "data"=> $conn->error);
